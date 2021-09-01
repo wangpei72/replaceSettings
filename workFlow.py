@@ -6,6 +6,8 @@ import getopt
 import targetFileStrReplacer as tfsr
 import linesCommentMaker as lcm
 
+
+button_ctl = True
 hasDone = False
 project_prefix = "/Users/wangpei/git-replace-test" # need
 project_name = "AliSourcingImage" # need
@@ -20,7 +22,8 @@ target_l_p = "local.properties"
 
 def gen_file_path(tar_f):
     file_path = get_file_path(project_name, tar_f, project_prefix)
-    blue_print("generating file_path... res: %s" % file_path)
+    if button_ctl:
+        color_print("generating file_path... res: %s" % file_path)
     return file_path
 
 
@@ -40,8 +43,8 @@ def blue_print(string):
 def replace_build_gradle(tar_f=target_b_g):
     print(" replacing build.gradle...")
     file_path = gen_file_path(tar_f)
-    tfsr.remark_n_replace_tar_str_allinone_print(file_path, "compileSdkVersion = 29", "compileSdkVersion = 30", True)
-    tfsr.remark_n_replace_tar_str_allinone_print(file_path, "targetSdkVersion = 29", "targetSdkVersion = 30", True)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, "compileSdkVersion = 29", "compileSdkVersion = 30", button_ctl)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, "targetSdkVersion = 29", "targetSdkVersion = 30", button_ctl)
     lines_content_list = []
     lines_src = lcm.get_file_path_lines(file_path)
     lines_content_list.append(lcm.find_content_str_line_num(lines_src, content_str="global_supportLibraryVersion='28.0.0'"))
@@ -62,7 +65,7 @@ def replace_s_g(tar_f=target_s_g):
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="System.properties['androidGradlePluginVersion'] = \"4.0.1\"",
                                                  str_replace="//  System.properties['androidGradlePluginVersion'] = \"4.1.0\"",
-                                                 button=True)
+                                                 button=button_ctl)
 
 
 def replace_m_b_g(tar_f=target_m_b_g):
@@ -88,7 +91,7 @@ def replace_g_p(tar_f=target_g_p):
         tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="android.enableJetifier=true",
                                                      str_replace="android.enableJetifier=true\n"
                                                         "dependency.locations.enabled=false",
-                                                     button=True)
+                                                     button=button_ctl)
         record_has_done_gp_for_this_path(file_path)
     else:
         blue_print("pkg-name/gradle.properties has done for replacing, aborting...")
@@ -97,7 +100,7 @@ def replace_g_p(tar_f=target_g_p):
 
 def record_has_done_gp_for_this_path(file_path):
     # with open("do-not-delete.txt", "a+") as fw:
-    tfsr.replace_tar_str_allinone_print("do-not-delete.txt", file_path + " hasDone:False", file_path + " hasDone:True", True)
+    tfsr.replace_tar_str_allinone_print("do-not-delete.txt", file_path + " hasDone:False", file_path + " hasDone:True", button=button_ctl)
 
 
 def record_first_for_do_job(file_path):
@@ -110,14 +113,14 @@ def replace_m_b_g_no_deletion(tar_f=target_m_b_g):
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="htmlReport true",
                                                  str_replace="htmlReport false",
-                                                 button=True)
+                                                 button=button_ctl)
     # lines_src = lcm.get_file_path_lines(file_path)
     # line_content_num = lcm.find_content_str_line_num(lines_src, content_str="preBuild.dependsOn projectReport")
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="preBuild.dependsOn projectReport",
                                                  str_replace="// preBuild.dependsOn projectReport\n"
                                                     "preBuild.dependsOn dependencyReport\n"
                                                     "preBuild.dependsOn propertyReport",
-                                                 button=True)
+                                                 button=button_ctl)
 
 
 def start_work_flow():
@@ -138,18 +141,6 @@ def print_help():
 
 
 if __name__ == "__main__":
-    # has_args = True
-    # if len(sys.argv) != 3:
-    #     has_args = False
-    #     print_help()
-    # if has_args:
-    #     project_prefix = sys.argv[1]
-    #     project_name = sys.argv[2]
-    #     start_work_flow()
-    #     if not hasDone:
-    #         # replace_g_p()
-    #         pass
-    #     hasDone = True
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hp:n:", ["pre=", "name="])
     except getopt.GetoptError:
