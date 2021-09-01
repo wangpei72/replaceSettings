@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import getopt
 import targetFileStrReplacer as tfsr
 import linesCommentMaker as lcm
 
@@ -39,8 +40,8 @@ def blue_print(string):
 def replace_build_gradle(tar_f=target_b_g):
     print(" replacing build.gradle...")
     file_path = gen_file_path(tar_f)
-    tfsr.replace_tar_str_allinone_print(file_path, "compileSdkVersion = 29", "compileSdkVersion = 30", True)
-    tfsr.replace_tar_str_allinone_print(file_path, "targetSdkVersion = 29", "targetSdkVersion = 30", True)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, "compileSdkVersion = 29", "compileSdkVersion = 30", True)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, "targetSdkVersion = 29", "targetSdkVersion = 30", True)
     lines_content_list = []
     lines_src = lcm.get_file_path_lines(file_path)
     lines_content_list.append(lcm.find_content_str_line_num(lines_src, content_str="global_supportLibraryVersion='28.0.0'"))
@@ -51,17 +52,17 @@ def replace_build_gradle(tar_f=target_b_g):
 def replace_g_w_p(tar_f=target_g_w_p):
     print("replacing gradle-wrapper.properties...")
     file_path = gen_file_path(tar_f)
-    tfsr.replace_tar_str_allinone_print(file_path, str_tar="distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip",
-                                        str_replace="distributionUrl=https\://mtl-gradle-mirror.oss-cn-hangzhou.aliyuncs.com/gradle-6.6-all.zip",
-                                        button=True)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip",
+                                                 str_replace="distributionUrl=https\://mtl-gradle-mirror.oss-cn-hangzhou.aliyuncs.com/gradle-6.6-all.zip",
+                                                 button=True)
 
 
 def replace_s_g(tar_f=target_s_g):
     print("replacing settings.properties...")
     file_path = gen_file_path(tar_f)
-    tfsr.replace_tar_str_allinone_print(file_path, str_tar="System.properties['androidGradlePluginVersion'] = \"4.0.1\"",
-                                        str_replace="//  System.properties['androidGradlePluginVersion'] = \"4.1.0\"",
-                                        button=True)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="System.properties['androidGradlePluginVersion'] = \"4.0.1\"",
+                                                 str_replace="//  System.properties['androidGradlePluginVersion'] = \"4.1.0\"",
+                                                 button=True)
 
 
 def replace_m_b_g(tar_f=target_m_b_g):
@@ -76,26 +77,47 @@ def replace_m_b_g(tar_f=target_m_b_g):
 def replace_g_p(tar_f=target_g_p):
     print("replacing gradle.properties...")
     file_path = gen_file_path(tar_f)
-    # 该函数只能执行一次 不然会导致无限闭包，第二行不停的增加，这是由于利用替换取代增添代码的逻辑
-    tfsr.replace_tar_str_allinone_print(file_path, str_tar="android.enableJetifier=true",
-                                        str_replace="android.enableJetifier=true\n"
-                                                    "dependency.locations.enabled=false",
-                                        button=True)
+    if not os.path.exists("do-not-delete,txt"):
+        os.system(r"touch {}".format("do-not-delete.txt"))
+    lines_src = lcm.get_file_path_lines("do-not-delete.txt")
+    line_content_num = lcm.find_content_str_line_num(lines_src, file_path)
+    if line_content_num == -1:  # 找不到表示从未执行过
+        # 该函数只能执行一次 不然会导致无限闭包，第二行不停的增加，这是由于利用替换取代增添代码的逻辑
+        print("into record and replacing gradle.properties...")
+        record_first_for_do_job(file_path)
+        tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="android.enableJetifier=true",
+                                                     str_replace="android.enableJetifier=true\n"
+                                                        "dependency.locations.enabled=false",
+                                                     button=True)
+        record_has_done_gp_for_this_path(file_path)
+    else:
+        blue_print("pkg-name/gradle.properties has done for replacing, aborting...")
+        return
+
+
+def record_has_done_gp_for_this_path(file_path):
+    # with open("do-not-delete.txt", "a+") as fw:
+    tfsr.replace_tar_str_allinone_print("do-not-delete.txt", file_path + " hasDone:False", file_path + " hasDone:True", True)
+
+
+def record_first_for_do_job(file_path):
+    with open("do-not-delete.txt", "a+") as fw:
+        fw.write(file_path+" hasDone:False")
 
 
 def replace_m_b_g_no_deletion(tar_f=target_m_b_g):
     print("replacing Main/build.gradle without deletion...")
     file_path = gen_file_path(tar_f)
-    tfsr.replace_tar_str_allinone_print(file_path, str_tar="htmlReport true",
-                                        str_replace="htmlReport false",
-                                        button=True)
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="htmlReport true",
+                                                 str_replace="htmlReport false",
+                                                 button=True)
     # lines_src = lcm.get_file_path_lines(file_path)
     # line_content_num = lcm.find_content_str_line_num(lines_src, content_str="preBuild.dependsOn projectReport")
-    tfsr.replace_tar_str_allinone_print(file_path, str_tar="preBuild.dependsOn projectReport",
-                                        str_replace="// preBuild.dependsOn projectReport\n"
+    tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="preBuild.dependsOn projectReport",
+                                                 str_replace="// preBuild.dependsOn projectReport\n"
                                                     "preBuild.dependsOn dependencyReport\n"
                                                     "preBuild.dependsOn propertyReport",
-                                        button=True)
+                                                 button=True)
 
 
 def start_work_flow():
@@ -108,19 +130,41 @@ def start_work_flow():
     color_print("work flow done")
 
 
+def print_help():
+    print("This .py is used for replacing settings content for a git repo when upgrading to target 30\n"
+          "Usage : python workFlow.py -p <prefix-path> -n <repo-name>\n"
+          "-p: prefix path for a git repo, e.g.: /Users/xxx/git-groups\n"
+          "-n: target git repository's name, e.g.: AliSourcingImage\n")
+
+
 if __name__ == "__main__":
-    has_args = True
-    if len(sys.argv) != 3:
-        has_args = False
-        print("This .py is used for replacing settings content for a git repo when upgrading to target 30\n"
-              "Usage : python workFlow.py [-p] [-n]\n"
-              "-p: prefix path for a git repo, e.g.: /Users/xxx/git-groups\n"
-              "-n: target git repository's name, e.g.: AliSourcingImage\n")
-    if has_args:
-        project_prefix = sys.argv[1]
-        project_name = sys.argv[2]
-        start_work_flow()
-        if not hasDone:
-            # replace_g_p()
-            pass
-        hasDone = True
+    # has_args = True
+    # if len(sys.argv) != 3:
+    #     has_args = False
+    #     print_help()
+    # if has_args:
+    #     project_prefix = sys.argv[1]
+    #     project_name = sys.argv[2]
+    #     start_work_flow()
+    #     if not hasDone:
+    #         # replace_g_p()
+    #         pass
+    #     hasDone = True
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hp:n:", ["pre=", "name="])
+    except getopt.GetoptError:
+        print_help()
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print_help()
+            sys.exit()
+        elif opt in ("-p", "--pre"):
+            project_prefix = arg
+        elif opt in ("-n", "--name"):
+            project_name = arg
+    print("prefix is %s" % project_prefix)
+    print("target repo name is %s" % project_name)
+    start_work_flow()
+    # if not hasDone:
+    replace_g_p()

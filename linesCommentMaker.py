@@ -46,7 +46,7 @@ def find_content_str_line_num(lines, content_str):
         # print("found str %s in not-comment lines, first at line %d" % (content_str, res[0]))
         return res[0]
     else:
-        pass
+        return -1
         # print("not found str %s in not-comment lines" % content_str)
 
 
