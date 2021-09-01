@@ -27,7 +27,7 @@ prefix: 指定的仓库前缀路径
 
 首先将需要升级参数的git-repos克隆至本地，并且统一放在一个父文件夹内，该父文件夹的目录作为prefix参数传递给脚本
 
-```
+```sh
 ./do_replace.sh /Users/wangpei/git-group-seller-project      
 ```
 
@@ -90,7 +90,7 @@ To gitlab.alibaba-inc.com:ANDROID_SELLER_JDY_MODULES/biz_desktop.git
 
 do_replace.sh中指明了当前需要做文本替换的仓库名称，变量repo_name_list是一个字符串列表，用来指定所有的仓库名称列表
 
-```
+```shell
 repo_name_list=(
   biz_desktop
   # 请在这里添加你需要的仓库名称
@@ -101,7 +101,7 @@ repo_name_list=(
 
 - 卖家在役仓库的名称list，主工程AlibabaSupplier已经被排除在外
 
-```
+```shell
   AlibabaSupplierMember 
   AliSupplierHermes 
   CloudMeeting_Android 
@@ -132,7 +132,7 @@ repo_name_list=(
 
 - 买家仓库的名称list，主工程排除在外
 
-```
+```shell
  PackageGatekeeper  
   mtl-gradle-plugin-lite  
   testcomparator  
