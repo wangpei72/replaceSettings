@@ -3,6 +3,7 @@
 import linesCommentMaker as lcm
 import re
 
+
 def test_replace_without_read_write_together(file_path, str_tar, str_replace):
     found = False
     with open(file_path, "r+") as fr:
