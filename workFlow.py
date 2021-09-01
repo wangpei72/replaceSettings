@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import logging
+import time
 import getopt
 import targetFileStrReplacer as tfsr
 import linesCommentMaker as lcm
@@ -41,7 +43,7 @@ def blue_print(string):
 
 
 def replace_build_gradle(tar_f=target_b_g):
-    print(" replacing build.gradle...")
+    log_print("replacing build.gradle...")
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, "compileSdkVersion = 29", "compileSdkVersion = 30", button_ctl)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, "targetSdkVersion = 29", "targetSdkVersion = 30", button_ctl)
@@ -53,7 +55,7 @@ def replace_build_gradle(tar_f=target_b_g):
 
 
 def replace_g_w_p(tar_f=target_g_w_p):
-    print("replacing gradle-wrapper.properties...")
+    log_print("replacing gradle-wrapper.properties...")
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip",
                                                  str_replace="distributionUrl=https\://mtl-gradle-mirror.oss-cn-hangzhou.aliyuncs.com/gradle-6.6-all.zip",
@@ -61,7 +63,7 @@ def replace_g_w_p(tar_f=target_g_w_p):
 
 
 def replace_s_g(tar_f=target_s_g):
-    print("replacing settings.properties...")
+    log_print("replacing settings.properties...")
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="System.properties['androidGradlePluginVersion'] = \"4.0.1\"",
                                                  str_replace="//  System.properties['androidGradlePluginVersion'] = \"4.1.0\"",
@@ -69,7 +71,7 @@ def replace_s_g(tar_f=target_s_g):
 
 
 def replace_m_b_g(tar_f=target_m_b_g):
-    print("replacing Main/build.gradle...")
+    log_print("replacing Main/build.gradle...")
     file_path = gen_file_path(tar_f)
     lines_src = lcm.get_file_path_lines(file_path)
     line_content_num = lcm.find_content_str_line_num(lines_src, content_str="manifestPlaceholders = [CHANNEL_VALUE: \"play\"," \
@@ -78,7 +80,7 @@ def replace_m_b_g(tar_f=target_m_b_g):
 
 
 def replace_g_p(tar_f=target_g_p):
-    print("replacing gradle.properties...")
+    log_print("replacing gradle.properties...")
     file_path = gen_file_path(tar_f)
     if not os.path.exists("do-not-delete,txt"):
         os.system(r"touch {}".format("do-not-delete.txt"))
@@ -86,7 +88,7 @@ def replace_g_p(tar_f=target_g_p):
     line_content_num = lcm.find_content_str_line_num(lines_src, file_path)
     if line_content_num == -1:  # 找不到表示从未执行过
         # 该函数只能执行一次 不然会导致无限闭包，第二行不停的增加，这是由于利用替换取代增添代码的逻辑
-        print("into record and replacing gradle.properties...")
+        log_print("into record and replacing gradle.properties...")
         record_first_for_do_job(file_path)
         tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="android.enableJetifier=true",
                                                      str_replace="android.enableJetifier=true\n"
@@ -95,6 +97,7 @@ def replace_g_p(tar_f=target_g_p):
         record_has_done_gp_for_this_path(file_path)
     else:
         blue_print("%s has done for replacing, aborting..." % file_path)
+        logging.debug(file_path + " has done for replacing, aborting...")
         return
 
 
@@ -109,7 +112,7 @@ def record_first_for_do_job(file_path):
 
 
 def replace_m_b_g_no_deletion(tar_f=target_m_b_g):
-    print("replacing Main/build.gradle without deletion...")
+    log_print("replacing Main/build.gradle without deletion...")
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="htmlReport true",
                                                  str_replace="htmlReport false",
@@ -123,12 +126,14 @@ def replace_m_b_g_no_deletion(tar_f=target_m_b_g):
 
 def start_work_flow():
     color_print("work flow start")
+    logging.debug("work flow start")
     replace_build_gradle()
     replace_g_w_p()
     replace_s_g()
     replace_m_b_g()
     replace_m_b_g_no_deletion()
     color_print("work flow done")
+    logging.debug("work flow done")
 
 
 def print_help():
@@ -138,7 +143,13 @@ def print_help():
           "-n: target git repository's name, e.g.: AliSourcingImage\n")
 
 
+def log_print(string):
+    logging.debug(string)
+    print(string)
+
+
 if __name__ == "__main__":
+
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hp:n:", ["pre=", "name="])
     except getopt.GetoptError:
@@ -152,7 +163,9 @@ if __name__ == "__main__":
             project_prefix = arg
         elif opt in ("-n", "--name"):
             project_name = arg
-    print("prefix is %s" % project_prefix)
-    print("target repo name is %s" % project_name)
+    logging.basicConfig(filename="./write.logs", format='%(levelname)s:%(filename)s:%(asctime)s:%(message)s', level=logging.DEBUG)
+    log_print("prefix is " + project_prefix)
+    log_print("target repo name is " + project_name)
     start_work_flow()
     replace_g_p()
+    logging.debug("\n\n")

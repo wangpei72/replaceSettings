@@ -2,3 +2,4 @@
 /fileLists*
 /.idea
 /__pycache__
+*.logs
