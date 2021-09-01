@@ -15,12 +15,11 @@ project_prefix = "/Users/wangpei/git-replace-test"  # need
 project_name = "AliSourcingImage"  # need
 target_b_g = "build.gradle"
 target_g_w_p = "gradle/wrapper/gradle-wrapper.properties"
-target_m_b_g= "Main/build.gradle"
+target_m_b_g = "Main/build.gradle"
 target_g_p = "gradle.properties"
 target_s_g = "settings.gradle"
 target_m_g_p = "Main/gradle.properties"
 target_l_p = "local.properties"
-monitor_path = project_prefix + "/do-not-delete.txt"
 
 
 def gen_file_path(tar_f):
@@ -67,7 +66,7 @@ def replace_s_g(tar_f=target_s_g):
     log_print("replacing settings.properties...")
     file_path = gen_file_path(tar_f)
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="System.properties['androidGradlePluginVersion'] = \"4.0.1\"",
-                                                 str_replace="//  System.properties['androidGradlePluginVersion'] = \"4.1.0\"",
+                                                 str_replace="System.properties['androidGradlePluginVersion'] = \"4.1.0\"",  # 此处AGP版本升上来可能导致编译不过
                                                  button=button_ctl)
 
 
@@ -80,34 +79,35 @@ def replace_m_b_g(tar_f=target_m_b_g):
     lcm.make_line_comment(file_path, line_content_num)
 
 
-def replace_g_p(tar_f=target_g_p):
+def replace_g_p(tar_f=target_g_p, monitor_path=os.path.join(project_prefix, "do-not-delete.txt")):
     log_print("replacing gradle.properties...")
     file_path = gen_file_path(tar_f)
-    if not os.path.exists(project_prefix + "do-not-delete,txt"):
+    if not os.path.exists(monitor_path):
+        print("monitor txt not exists")
         os.system(r"touch {}".format(monitor_path))
     lines_src = lcm.get_file_path_lines(monitor_path)
     line_content_num = lcm.find_content_str_line_num(lines_src, file_path)
     if line_content_num == -1:  # 找不到表示从未执行过
         # 该函数只能执行一次 不然会导致无限闭包，第二行不停的增加，这是由于利用替换取代增添代码的逻辑
         log_print("into record and replacing gradle.properties...")
-        record_first_for_do_job(file_path)
+        record_first_for_do_job(file_path, monitor_path)
         tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="android.enableJetifier=true",
                                                      str_replace="android.enableJetifier=true\n"
                                                         "dependency.locations.enabled=false",
                                                      button=button_ctl)
-        record_has_done_gp_for_this_path(file_path)
+        record_has_done_gp_for_this_path(file_path, monitor_path)
     else:
         blue_print("%s has done for replacing, aborting..." % file_path)
         logging.debug(file_path + " has done for replacing, aborting...")
         return
 
 
-def record_has_done_gp_for_this_path(file_path):
+def record_has_done_gp_for_this_path(file_path, monitor_path):
     # with open(monitor_path, "a+") as fw:
     tfsr.replace_tar_str_allinone_print(monitor_path, file_path + " hasDone:False", file_path + " hasDone:True", button=button_ctl)
 
 
-def record_first_for_do_job(file_path):
+def record_first_for_do_job(file_path, monitor_path):
     with open(monitor_path, "a+") as fw:
         fw.write(file_path+" hasDone:False")
 
@@ -168,5 +168,5 @@ if __name__ == "__main__":
     log_print("prefix is " + project_prefix)
     log_print("target repo name is " + project_name)
     start_work_flow()
-    replace_g_p()
+    replace_g_p(monitor_path=os.path.join(project_prefix, "do-not-delete.txt"))
     logging.debug("\n\n")

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+cur_path=$(cd $(dirname $0); pwd)
+echo "current path is ${cur_path}"
 echo "job starting..."
 repo_name_list=(
   biz_desktop
@@ -14,11 +16,10 @@ for((i=0;i<$len;i++));do
     git checkout -B feature/upgrade_target30 origin/develop
     
     # 执行替换
-    /Users/wangpei/workspace/replaceSettings/workFlow.py -p ${prefix} -n ${repo_name_list[$i]}
+    ${cur_path}/workFlow.py -p ${prefix} -n ${repo_name_list[$i]}
     
     # git 提交
-    git add.
-    git commit -m "feature:执行do_replace.sh脚本,替换构建参数文本"
+    git commit -a -m "feature:执行do_replace.sh脚本,替换构建参数文本"
     
     # git push <remote> <branch>:<branch-rm>
     git push origin feature/upgrade_target30:feature/upgrade_target30
