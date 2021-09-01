@@ -114,8 +114,6 @@ def replace_m_b_g_no_deletion(tar_f=target_m_b_g):
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="htmlReport true",
                                                  str_replace="htmlReport false",
                                                  button=button_ctl)
-    # lines_src = lcm.get_file_path_lines(file_path)
-    # line_content_num = lcm.find_content_str_line_num(lines_src, content_str="preBuild.dependsOn projectReport")
     tfsr.remark_n_replace_tar_str_allinone_print(file_path, str_tar="preBuild.dependsOn projectReport",
                                                  str_replace="// preBuild.dependsOn projectReport\n"
                                                     "preBuild.dependsOn dependencyReport\n"
@@ -157,5 +155,4 @@ if __name__ == "__main__":
     print("prefix is %s" % project_prefix)
     print("target repo name is %s" % project_name)
     start_work_flow()
-    # if not hasDone:
     replace_g_p()
