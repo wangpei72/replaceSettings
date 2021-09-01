@@ -11,8 +11,8 @@ import linesCommentMaker as lcm
 
 button_ctl = True
 hasDone = False
-project_prefix = "/Users/wangpei/git-replace-test" # need
-project_name = "AliSourcingImage" # need
+project_prefix = "/Users/wangpei/git-replace-test"  # need
+project_name = "AliSourcingImage"  # need
 target_b_g = "build.gradle"
 target_g_w_p = "gradle/wrapper/gradle-wrapper.properties"
 target_m_b_g= "Main/build.gradle"
@@ -20,6 +20,7 @@ target_g_p = "gradle.properties"
 target_s_g = "settings.gradle"
 target_m_g_p = "Main/gradle.properties"
 target_l_p = "local.properties"
+monitor_path = project_prefix + "/do-not-delete.txt"
 
 
 def gen_file_path(tar_f):
@@ -82,9 +83,9 @@ def replace_m_b_g(tar_f=target_m_b_g):
 def replace_g_p(tar_f=target_g_p):
     log_print("replacing gradle.properties...")
     file_path = gen_file_path(tar_f)
-    if not os.path.exists("do-not-delete,txt"):
-        os.system(r"touch {}".format("do-not-delete.txt"))
-    lines_src = lcm.get_file_path_lines("do-not-delete.txt")
+    if not os.path.exists(project_prefix + "do-not-delete,txt"):
+        os.system(r"touch {}".format(monitor_path))
+    lines_src = lcm.get_file_path_lines(monitor_path)
     line_content_num = lcm.find_content_str_line_num(lines_src, file_path)
     if line_content_num == -1:  # 找不到表示从未执行过
         # 该函数只能执行一次 不然会导致无限闭包，第二行不停的增加，这是由于利用替换取代增添代码的逻辑
@@ -102,12 +103,12 @@ def replace_g_p(tar_f=target_g_p):
 
 
 def record_has_done_gp_for_this_path(file_path):
-    # with open("do-not-delete.txt", "a+") as fw:
-    tfsr.replace_tar_str_allinone_print("do-not-delete.txt", file_path + " hasDone:False", file_path + " hasDone:True", button=button_ctl)
+    # with open(monitor_path, "a+") as fw:
+    tfsr.replace_tar_str_allinone_print(monitor_path, file_path + " hasDone:False", file_path + " hasDone:True", button=button_ctl)
 
 
 def record_first_for_do_job(file_path):
-    with open("do-not-delete.txt", "a+") as fw:
+    with open(monitor_path, "a+") as fw:
         fw.write(file_path+" hasDone:False")
 
 
@@ -163,7 +164,7 @@ if __name__ == "__main__":
             project_prefix = arg
         elif opt in ("-n", "--name"):
             project_name = arg
-    logging.basicConfig(filename="./write.logs", format='%(levelname)s:%(filename)s:%(asctime)s:%(message)s', level=logging.DEBUG)
+    logging.basicConfig(filename=os.path.join(project_prefix, "write.logs"), format='%(levelname)s:%(filename)s:%(asctime)s:%(message)s', level=logging.DEBUG)
     log_print("prefix is " + project_prefix)
     log_print("target repo name is " + project_name)
     start_work_flow()

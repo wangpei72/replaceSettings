@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import linesCommentMaker as lcm
 import re
+import logging
 
 
 def test_replace_without_read_write_together(file_path, str_tar, str_replace):
@@ -13,6 +14,7 @@ def test_replace_without_read_write_together(file_path, str_tar, str_replace):
             print("found %s" % str_tar)
             new_ct = content.replace(str_tar, str_replace)
         else:
+
             print("target str \"%s\" not found" % str_tar)
     if found:
         with open(file_path, "w+") as fw:
@@ -56,6 +58,7 @@ def remark_n_replace_tar_str_allinone_print(file_path, str_tar, str_replace, but
         if str_tar in line and reg.match(line) is None:
             found = True
             if button:
+                logging.debug("found %s at line %d" % (str_tar, line_cnt))
                 print("found %s at line %d" % (str_tar, line_cnt))
             line_cmt = lcm.get_line_comment_str(file_path, line)
             line_concate += line_cmt
@@ -69,6 +72,7 @@ def remark_n_replace_tar_str_allinone_print(file_path, str_tar, str_replace, but
             fw.write(line_concate)
     else:
         if button:
+            logging.debug("target str \"%s\" not found" % str_tar)
             print("target str \"%s\" not found" % str_tar)
 
 
@@ -84,6 +88,7 @@ def replace_tar_str_allinone_print(file_path, str_tar, str_replace, button=False
         if str_tar in line and reg.match(line) is None:
             found = True
             if button:
+                logging.debug("found %s at line %d" % (str_tar, line_cnt))
                 print("found %s at line %d" % (str_tar, line_cnt))
             line_replace_copy = line.replace(str_tar, str_replace)
             line_concate += line_replace_copy
@@ -94,6 +99,7 @@ def replace_tar_str_allinone_print(file_path, str_tar, str_replace, button=False
             fw.write(line_concate)
     else:
         if button:
+            logging.debug("target str \"%s\" not found" % str_tar)
             print("target str \"%s\" not found" % str_tar)
 
 
