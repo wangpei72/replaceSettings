@@ -94,7 +94,7 @@ def replace_g_p(tar_f=target_g_p):
                                                      button=button_ctl)
         record_has_done_gp_for_this_path(file_path)
     else:
-        blue_print("pkg-name/gradle.properties has done for replacing, aborting...")
+        blue_print("%s has done for replacing, aborting..." % file_path)
         return
 
 
