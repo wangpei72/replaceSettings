@@ -97,52 +97,5 @@ repo_name_list=(
 )
 ```
 
-## 一些资源
 
-- 卖家在役仓库的名称list，主工程AlibabaSupplier已经被排除在外
-
-```shell
-  AlibabaSupplierMember 
-  AliSupplierHermes 
-  CloudMeeting_Android 
-  AlibabaSupplierKit 
-  AliSupplierAlivePush 
-  AlibabaSupplierPoplayer 
-  biz_mc 
-  AliSupplierBizBase 
-  AlibabaSupplierBizSearch 
-  AliSupplierImage 
-  AliSupplierCorePlugin 
-  AliSupplierBoot 
-  AliSourcingSubtitle 
-  AliSupplierLanguage 
-  ICBU_Flutter_DPL 
-  biz_tango 
-  openIMKitUtility 
-  SteelORM 
-  KeyTool 
-  FileSelector_Android 
-  Alibaba-Android-CI 
-  jdy_android 
-  ASTangoModule 
-  QianniuAnnotationProcessor 
-  QianniuAnnotation
-  biz_desktop
-```
-
-- 买家仓库的名称list，主工程排除在外
-
-```shell
- PackageGatekeeper  
-  mtl-gradle-plugin-lite  
-  testcomparator  
-  AliSourcingVideoTalk  
-  StripR  
-  facebook-android-sdk  
-  AliOneTouchPartnerProject  
-  AliSourcingPDK  
-  buildscript  
-  AliSourcingBase  
-  AliSourcingLinkInSDK
-```
 
